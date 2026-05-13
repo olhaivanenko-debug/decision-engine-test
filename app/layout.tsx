@@ -21,17 +21,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <a href="#main-content" className="skip-nav">
-          Skip to main content
-        </a>
-        <main id="main-content" className="flex flex-col w-full flex-1">
-          {children}
-        </main>
+        <ClerkProvider>
+          <a href="#main-content" className="skip-nav">
+            Skip to main content
+          </a>
+          <main id="main-content" className="flex flex-col w-full flex-1">
+            {children}
+          </main>
+        </ClerkProvider>
       </body>
     </html>
-    </ClerkProvider>
   );
 }

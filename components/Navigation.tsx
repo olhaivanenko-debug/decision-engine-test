@@ -1,3 +1,4 @@
+import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 import Logo from "@/components/ui/Logo";
@@ -41,15 +42,23 @@ export default function Navigation() {
 
         {/* CTA buttons */}
         <div className="flex items-center gap-3">
-          <a
-            href="/sign-in"
-            className="text-[16px] font-medium leading-6 px-4 py-2 rounded-md transition-colors text-[#90a1b9] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0f1e]"
-          >
-            Sign in
-          </a>
-          <Button href="/sign-up" variant="primary" size="sm" className="px-5 py-2.5">
-            Get Started
-          </Button>
+          <Show when="signed-out">
+            <SignInButton mode="redirect" fallbackRedirectUrl="/dashboard">
+              <button className="text-[16px] font-medium leading-6 px-4 py-2 rounded-md transition-colors text-[#90a1b9] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0f1e]">
+                Sign in
+              </button>
+            </SignInButton>
+            <SignUpButton mode="redirect" fallbackRedirectUrl="/dashboard">
+              <Button variant="primary" size="sm" className="px-5 py-2.5">
+                Get Started
+              </Button>
+            </SignUpButton>
+          </Show>
+          <Show when="signed-in">
+            <UserButton
+              appearance={{ elements: { avatarBox: "w-8 h-8" } }}
+            />
+          </Show>
         </div>
       </Container>
     </nav>
