@@ -326,10 +326,10 @@ export default function HowItWorksPage() {
               building the logic and the leaders who need to trust it.
             </p>
             <div className="flex items-center gap-4 pt-1">
-              <Button href="#" variant="gradient" size="lg">
+              <Button href="/sign-up" variant="gradient" size="lg">
                 Start building free
               </Button>
-              <Button href="#" variant="ghost" size="lg">
+              <Button href="/contact" variant="ghost" size="lg">
                 Watch walkthrough
               </Button>
             </div>

@@ -117,7 +117,7 @@ export default function Hero() {
 
           {/* CTAs */}
           <div className="flex items-center gap-4">
-            <Button href="#" variant="primary">
+            <Button href="/sign-up" variant="primary">
               Start Building Free
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <path
@@ -129,7 +129,7 @@ export default function Hero() {
                 />
               </svg>
             </Button>
-            <Button href="#" variant="ghost">
+            <Button href="/how-it-works" variant="ghost">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <circle cx="8" cy="8" r="6" stroke="white" strokeWidth="1.5" />
                 <path d="M6.5 5.5l4 2.5-4 2.5V5.5z" fill="white" />

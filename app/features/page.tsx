@@ -182,7 +182,7 @@ export default function FeaturesPage() {
               <Button href="/pricing" variant="gradient" size="lg">
                 View pricing
               </Button>
-              <Button href="#" variant="ghost" size="lg">
+              <Button href="/contact" variant="ghost" size="lg">
                 Request demo
               </Button>
             </div>

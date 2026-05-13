@@ -80,7 +80,7 @@ export default function UseCases() {
                   </p>
                 </div>
                 <a
-                  href="#"
+                  href="/use-cases"
                   className="flex items-center gap-1.5 text-[14px] font-medium mt-auto transition-opacity hover:opacity-70"
                   style={{ color: "#0066ff" }}
                   aria-label={`Learn more about ${uc.title}`}

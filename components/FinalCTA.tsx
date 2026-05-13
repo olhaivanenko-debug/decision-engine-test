@@ -68,7 +68,7 @@ export default function FinalCTA() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-4">
-              <Button href="#" variant="gradient" size="lg">
+              <Button href="/sign-up" variant="gradient" size="lg">
                 Get Started Free
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                   <path
@@ -80,7 +80,7 @@ export default function FinalCTA() {
                   />
                 </svg>
               </Button>
-              <Button href="#" variant="ghost" size="lg">
+              <Button href="/contact" variant="ghost" size="lg">
                 Talk to Sales
               </Button>
             </div>

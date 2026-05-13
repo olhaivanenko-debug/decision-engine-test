@@ -14,19 +14,19 @@ const footerColumns = [
   {
     heading: "Resources",
     links: [
-      { label: "Documentation", href: "#" },
-      { label: "API Reference", href: "#" },
-      { label: "Guides", href: "#" },
-      { label: "Support", href: "#" },
+      { label: "Documentation", href: "/docs" },
+      { label: "API Reference", href: "/docs" },
+      { label: "Guides", href: "/docs" },
+      { label: "Support", href: "/contact" },
     ],
   },
   {
     heading: "Company",
     links: [
       { label: "About", href: "/about" },
-      { label: "Blog", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Contact", href: "#" },
+      { label: "Blog", href: "/blog" },
+      { label: "Careers", href: "/careers" },
+      { label: "Contact", href: "/contact" },
     ],
   },
 ];
@@ -94,13 +94,17 @@ export default function Footer() {
             © 2026 Decision Engine. All rights reserved.
           </span>
           <nav className="flex items-center gap-6" aria-label="Legal links">
-            {["Privacy", "Terms", "Cookies"].map((link) => (
+            {[
+                { label: "Privacy", href: "/privacy" },
+                { label: "Terms", href: "/terms" },
+                { label: "Cookies", href: "/cookies" },
+              ].map(({ label, href }) => (
               <a
-                key={link}
-                href="#"
+                key={label}
+                href={href}
                 className="text-[14px] font-normal transition-colors text-[#90a1b9] hover:text-white"
               >
-                {link}
+                {label}
               </a>
             ))}
           </nav>

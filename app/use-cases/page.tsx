@@ -190,7 +190,7 @@ export default function UseCasesPage() {
               <Button href="/pricing" variant="gradient" size="lg">
                 Get started
               </Button>
-              <Button href="#" variant="ghost" size="lg">
+              <Button href="/contact" variant="ghost" size="lg">
                 Talk to sales
               </Button>
             </div>

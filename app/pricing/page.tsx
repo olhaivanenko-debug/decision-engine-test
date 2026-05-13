@@ -19,6 +19,7 @@ type Tier = {
   period: string;
   description: string;
   cta: string;
+  ctaHref: string;
   ctaVariant: "primary" | "gradient" | "ghost" | "outline";
   featured: boolean;
   badge?: string;
@@ -33,6 +34,7 @@ const tiers: Tier[] = [
     period: "/ month",
     description: "For small teams building their first decision workflows.",
     cta: "Start free trial",
+    ctaHref: "/sign-up",
     ctaVariant: "outline",
     featured: false,
     features: [
@@ -56,6 +58,7 @@ const tiers: Tier[] = [
     period: "/ month",
     description: "For scaling companies that need reliability, analytics, and controls.",
     cta: "Start free trial",
+    ctaHref: "/sign-up",
     ctaVariant: "gradient",
     featured: true,
     badge: "Most popular",
@@ -82,6 +85,7 @@ const tiers: Tier[] = [
     period: "",
     description: "For regulated industries requiring governance, SLAs, and dedicated support.",
     cta: "Contact sales",
+    ctaHref: "/contact",
     ctaVariant: "primary",
     featured: false,
     features: [
@@ -301,7 +305,7 @@ export default function PricingPage() {
                   <p className="text-[14px] leading-snug" style={{ color: tier.featured ? "#90a1b9" : "#4a5565" }}>
                     {tier.description}
                   </p>
-                  <Button href="#" variant={tier.ctaVariant} size="md">
+                  <Button href={tier.ctaHref} variant={tier.ctaVariant} size="md">
                     {tier.cta}
                   </Button>
                 </div>
@@ -421,10 +425,10 @@ export default function PricingPage() {
               </p>
             </div>
             <div className="flex items-center gap-3 flex-shrink-0">
-              <Button href="#" variant="primary" size="lg">
+              <Button href="/contact" variant="primary" size="lg">
                 Contact sales
               </Button>
-              <Button href="#" variant="ghost" size="lg">
+              <Button href="/security" variant="ghost" size="lg">
                 View security docs
               </Button>
             </div>

@@ -360,7 +360,7 @@ export default function AboutPage() {
                 <Button href="/features" variant="gradient" size="lg">
                   Explore the platform
                 </Button>
-                <Button href="#" variant="ghost" size="lg">
+                <Button href="/contact" variant="ghost" size="lg">
                   Talk to us
                 </Button>
               </div>
