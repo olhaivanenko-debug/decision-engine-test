@@ -1,4 +1,5 @@
 import Container from "@/components/ui/Container";
+import Logo from "@/components/ui/Logo";
 
 const footerColumns = [
   {
@@ -29,22 +30,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="flex flex-col gap-4 max-w-[280px]">
             <a href="/" className="flex items-center gap-2.5" aria-label="Decision Engine home">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                aria-hidden="true"
-                style={{
-                  background: "linear-gradient(135deg, #0066ff 0%, #00d4ff 100%)",
-                }}
-              >
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path
-                    d="M4 9h10M9 4v10M4 4l10 10M14 4L4 14"
-                    stroke="white"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </div>
+              <Logo className="flex-shrink-0" />
               <span className="text-[16px] font-semibold text-white">
                 Decision Engine
               </span>
