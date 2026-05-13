@@ -178,11 +178,11 @@ export default function Hero() {
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <button className="px-3 py-1.5 rounded-md text-[14px] font-medium text-gray-700 border border-gray-200 hover:bg-gray-50 transition-colors">
+                <button className="cursor-pointer px-3 py-1.5 rounded-md text-[14px] font-medium text-gray-700 border border-gray-200 hover:bg-gray-50 transition-colors">
                   Test
                 </button>
                 <button
-                  className="px-3 py-1.5 rounded-md text-[14px] font-medium text-white transition-opacity hover:opacity-90"
+                  className="cursor-pointer px-3 py-1.5 rounded-md text-[14px] font-medium text-white transition-opacity hover:opacity-90"
                   style={{ backgroundColor: "#0066ff" }}
                 >
                   Deploy

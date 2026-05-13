@@ -44,7 +44,7 @@ export default function Navigation() {
         <div className="flex items-center gap-3">
           <Show when="signed-out">
             <SignInButton mode="redirect" fallbackRedirectUrl="/dashboard">
-              <button className="text-[16px] font-medium leading-6 px-4 py-2 rounded-md transition-colors text-[#90a1b9] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0f1e]">
+              <button className="cursor-pointer text-[16px] font-medium leading-6 px-4 py-2 rounded-md transition-colors text-[#90a1b9] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0f1e]">
                 Sign in
               </button>
             </SignInButton>

@@ -61,7 +61,7 @@ export default function Button({
   const { className: variantClass, style: variantStyle } = variantStyles[variant];
 
   const baseClass = cn(
-    "inline-flex items-center gap-2 rounded-lg font-medium",
+    "inline-flex items-center gap-2 rounded-lg font-medium cursor-pointer",
     sizeStyles[size],
     variant === "ghost" || variant === "outline" ? "border" : "",
     variantClass,

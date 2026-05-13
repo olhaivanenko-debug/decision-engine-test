@@ -51,6 +51,28 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Pointer cursor on all interactive elements */
+a,
+button,
+[role="button"],
+label[for],
+summary,
+select,
+input[type="submit"],
+input[type="button"],
+input[type="reset"] {
+  cursor: pointer;
+}
+
+/* Disabled states */
+button:disabled,
+input:disabled,
+select:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 /* Accessibility: skip navigation link */
 .skip-nav {
   position: absolute;
@@ -88,6 +110,19 @@ body {
    These handle hover/focus pseudo-classes and elements that Clerk's
    appearance.elements API cannot reach with inline styles.
    ───────────────────────────────────────────────────────────────── */
+
+/* Clerk buttons — cursor */
+.cl-socialButtonsBlockButton,
+.cl-formButtonPrimary,
+.cl-formButtonReset,
+.cl-footerActionLink,
+.cl-formFieldAction,
+.cl-identityPreviewEditButton,
+.cl-otpCodeFieldInput,
+.cl-userButtonTrigger,
+.cl-userButtonAvatarBox {
+  cursor: pointer !important;
+}
 
 /* Social button (Google) — hover */
 .cl-socialButtonsBlockButton:hover {
