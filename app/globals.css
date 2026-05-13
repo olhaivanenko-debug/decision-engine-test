@@ -82,3 +82,68 @@ body {
 :focus:not(:focus-visible) {
   outline: none;
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   Clerk Auth UI — global overrides
+   These handle hover/focus pseudo-classes and elements that Clerk's
+   appearance.elements API cannot reach with inline styles.
+   ───────────────────────────────────────────────────────────────── */
+
+/* Social button (Google) — hover */
+.cl-socialButtonsBlockButton:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+.cl-socialButtonsBlockButton:focus-visible {
+  outline: 2px solid rgba(0, 102, 255, 0.5) !important;
+  outline-offset: 2px !important;
+}
+
+/* Input — focus ring */
+.cl-formFieldInput:focus {
+  border-color: rgba(0, 102, 255, 0.55) !important;
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.12) !important;
+  outline: none !important;
+}
+.cl-formFieldInput::placeholder {
+  color: #4a5565 !important;
+}
+
+/* Primary button — hover / active */
+.cl-formButtonPrimary:hover {
+  background: linear-gradient(90deg, #0052cc 0%, #0066ff 100%) !important;
+  opacity: 1 !important;
+}
+.cl-formButtonPrimary:active {
+  transform: translateY(1px) !important;
+}
+.cl-formButtonPrimary:focus-visible {
+  outline: 2px solid rgba(0, 102, 255, 0.6) !important;
+  outline-offset: 2px !important;
+}
+
+/* Footer action link — hover */
+.cl-footerActionLink:hover {
+  color: #3d8aff !important;
+}
+.cl-formFieldAction:hover {
+  color: #3d8aff !important;
+}
+
+/* ── Development-mode banner ──────────────────────────────────────
+   Clerk shows a "Development mode" badge in the card footer.
+   We suppress it visually — it reappears in production as a no-op. */
+.cl-badge,
+.cl-badge--shadow,
+.cl-internal-13y2ras,  /* versioned internal class — belt & suspenders */
+[class*="cl-badge"] {
+  display: none !important;
+}
+
+/* Also hide the surrounding dev-mode notice row if present */
+.cl-devBrowserBadge,
+[data-localization-key="badge__devMode"],
+[class*="devMode"],
+[class*="devBrowser"] {
+  display: none !important;
+}
