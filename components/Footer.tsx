@@ -4,15 +4,30 @@ import Logo from "@/components/ui/Logo";
 const footerColumns = [
   {
     heading: "Product",
-    links: ["Features", "Integrations", "Pricing", "Security"],
+    links: [
+      { label: "Features", href: "/features" },
+      { label: "Use Cases", href: "/use-cases" },
+      { label: "How it Works", href: "/how-it-works" },
+      { label: "Pricing", href: "/pricing" },
+    ],
   },
   {
     heading: "Resources",
-    links: ["Documentation", "API Reference", "Guides", "Support"],
+    links: [
+      { label: "Documentation", href: "#" },
+      { label: "API Reference", href: "#" },
+      { label: "Guides", href: "#" },
+      { label: "Support", href: "#" },
+    ],
   },
   {
     heading: "Company",
-    links: ["About", "Blog", "Careers", "Contact"],
+    links: [
+      { label: "About", href: "/about" },
+      { label: "Blog", href: "#" },
+      { label: "Careers", href: "#" },
+      { label: "Contact", href: "#" },
+    ],
   },
 ];
 
@@ -52,12 +67,12 @@ export default function Footer() {
                 </span>
                 <ul className="flex flex-col gap-3">
                   {col.links.map((link) => (
-                    <li key={link}>
+                    <li key={link.label}>
                       <a
-                        href="#"
+                        href={link.href}
                         className="text-[14px] font-normal transition-colors text-[#90a1b9] hover:text-white"
                       >
-                        {link}
+                        {link.label}
                       </a>
                     </li>
                   ))}

@@ -3,10 +3,10 @@ import Button from "@/components/ui/Button";
 import Logo from "@/components/ui/Logo";
 
 const navLinks = [
-  { label: "Features", href: "#features" },
-  { label: "Use Cases", href: "#use-cases" },
-  { label: "How it Works", href: "#how-it-works" },
-  { label: "Pricing", href: "#pricing" },
+  { label: "Features", href: "/features" },
+  { label: "Use Cases", href: "/use-cases" },
+  { label: "How it Works", href: "/how-it-works" },
+  { label: "Pricing", href: "/pricing" },
 ];
 
 export default function Navigation() {
