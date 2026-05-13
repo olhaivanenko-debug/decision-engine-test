@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand colors */
+  --color-primary: #0066ff;
+  --color-primary-dark: #0052cc;
+  --color-cyan: #00d4ff;
+  --color-cyan-light: #3d8aff;
+
+  /* Dark backgrounds */
+  --color-dark-deep: #0a0f1e;
+  --color-dark-navy: #0a0e27;
+  --color-dark-surface: #0f1629;
+  --color-dark-card: #131d35;
+
+  /* Text */
+  --color-muted: #90a1b9;
+  --color-slate: #4a5565;
+
+  /* Status */
+  --color-success: #00c950;
+  --color-warning: #f0b100;
+  --color-error: #fb2c36;
+  --color-orange: #ff6900;
+
+  /* Font */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Light theme (default) */
+:root {
+  --bg: #ffffff;
+  --fg: #111827;
+  --bg-surface: #f9fafb;
+  --border: #e5e7eb;
+}
+
+/* Dark theme — applied when [data-theme="dark"] is set on <html> */
+[data-theme="dark"] {
+  --bg: #0a0f1e;
+  --fg: #ffffff;
+  --bg-surface: #0f1629;
+  --border: rgba(255, 255, 255, 0.08);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Accessibility: skip navigation link */
+.skip-nav {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 9999;
+  padding: 0.75rem 1.5rem;
+  background: #0066ff;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 0 0 8px 0;
+  transition: top 0.1s;
+}
+
+.skip-nav:focus {
+  top: 0;
+}
+
+/* Accessibility: consistent focus styles */
+:focus-visible {
+  outline: 2px solid #0066ff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove default focus ring for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
