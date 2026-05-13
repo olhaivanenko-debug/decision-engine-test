@@ -1,6 +1,15 @@
 // ============================================================
-// Decision Engine — AI Generated Design System
-// Figma Plugin Script  v2
+// Decision Engine — Design System
+// Figma Plugin Script  v3
+//
+// REACT COMPONENT MAP:
+//   ui/Logo          → components/ui/Logo.tsx
+//   ui/Badge         → components/ui/Badge.tsx
+//   ui/Button        → components/ui/Button.tsx
+//   ui/Card          → components/ui/Card.tsx
+//   ui/SectionHeader → components/ui/SectionHeader.tsx
+//
+// Design token source of truth: lib/tokens.ts
 //
 // HOW TO RUN:
 //   In Figma: Plugins → Development → Open console (or
@@ -36,13 +45,10 @@ const fontFor = (weight) => {
 };
 
 async function loadAllFonts() {
-  // Discover every available style for this family
   let allFonts;
   try {
     allFonts = await figma.listAvailableFontsAsync();
   } catch {
-    // listAvailableFontsAsync may not be available in all contexts;
-    // fall back to trying a known list
     allFonts = [];
   }
 
@@ -50,7 +56,6 @@ async function loadAllFonts() {
     .filter(f => f.fontName.family === FAMILY)
     .map(f => f.fontName.style);
 
-  // Candidates we care about
   const candidates = interStyles.length > 0
     ? interStyles
     : ['Thin','Extra Light','Light','Regular','Medium','Semi Bold','SemiBold','Bold','Extra Bold','Black'];
@@ -164,6 +169,9 @@ async function setupPage() {
 }
 
 // ─── 3. DESIGN TOKENS ─────────────────────────────────────────────────────────
+// Source of truth: lib/tokens.ts
+// Note: Border/Dark is shown as opaque #1E2740 here;
+//       the actual token is rgba(255,255,255,0.08) (alpha-based, dark-bg dependent).
 
 const COLORS = {
   'Brand/Primary':        '#0066FF',
@@ -208,9 +216,8 @@ function buildColorSection(page, x, y) {
   const section = autoFrame('Colors', 'VERTICAL', 32);
   section.x = x;
   section.y = y;
-  section.appendChild(sectionTitle('Color Tokens'));
+  section.appendChild(sectionTitle('Color Tokens · lib/tokens.ts'));
 
-  // Group tokens by prefix
   const groups = {};
   for (const [name, hex] of Object.entries(COLORS)) {
     const [group] = name.split('/');
@@ -219,10 +226,7 @@ function buildColorSection(page, x, y) {
 
   for (const [group, tokens] of Object.entries(groups)) {
     const groupBlock = autoFrame(`Group/${group}`, 'VERTICAL', 12);
-
-    groupBlock.appendChild(
-      txt(group, 13, 'semibold', '#FFFFFF')
-    );
+    groupBlock.appendChild(txt(group, 13, 'semibold', '#FFFFFF'));
 
     const swatchRow = autoFrame(`Swatches/${group}`, 'HORIZONTAL', 12);
     swatchRow.counterAxisAlignItems = 'MIN';
@@ -256,7 +260,7 @@ function buildTypeSection(page, x, y) {
   const section = autoFrame('Typography', 'VERTICAL', 0);
   section.x = x;
   section.y = y;
-  section.appendChild(sectionTitle('Typography Scale'));
+  section.appendChild(sectionTitle('Typography Scale · Inter'));
 
   for (let i = 0; i < TYPE_SCALE.length; i++) {
     const step = TYPE_SCALE[i];
@@ -266,7 +270,6 @@ function buildTypeSection(page, x, y) {
     row.paddingTop = 16;
     row.paddingBottom = 16;
 
-    // Left meta column (fixed width)
     const meta = figma.createFrame();
     meta.name = 'Meta';
     meta.layoutMode = 'VERTICAL';
@@ -282,7 +285,6 @@ function buildTypeSection(page, x, y) {
       txt(`${step.size}/${step.lh}px · ${fontFor(step.weight).style}`, 11, 'regular', '#4A5565')
     );
 
-    // Sample text
     const sample = txt('Decision Engine', step.size, step.weight, '#FFFFFF', {
       lineHeight: step.lh,
     });
@@ -305,7 +307,7 @@ function buildSpacingSection(page, x, y) {
   const section = autoFrame('Spacing', 'VERTICAL', 20);
   section.x = x;
   section.y = y;
-  section.appendChild(sectionTitle('Spacing Scale'));
+  section.appendChild(sectionTitle('Spacing Scale · 4px base grid'));
 
   const row = autoFrame('Tokens', 'HORIZONTAL', 20);
   row.counterAxisAlignItems = 'BASELINE';
@@ -316,7 +318,7 @@ function buildSpacingSection(page, x, y) {
 
     const bar = figma.createRectangle();
     bar.name = 'Bar';
-    bar.resize(Math.max(val, 12), val); // min width 12 so tiny values are visible
+    bar.resize(Math.max(val, 12), val);
     bar.cornerRadius = Math.min(4, val / 4);
     bar.fills = solid('#0066FF', 0.4);
     bar.strokes = solid('#0066FF');
@@ -333,24 +335,162 @@ function buildSpacingSection(page, x, y) {
   return section;
 }
 
-function buildButtonSection(page, x, y) {
-  const section = autoFrame('Buttons', 'VERTICAL', 28);
+// ─── ui/Logo ──────────────────────────────────────────────────────────────────
+// React: components/ui/Logo.tsx  (Figma source: node 1:548)
+// Props: size (default 32), className
+// Usage: <Logo size={32} className="flex-shrink-0" />
+//
+// SVG notes:
+//   - Two layered diagonal gradients (#0066FF→#00D4FF and #155DFC→#2B7FFF)
+//   - Gradient IDs are instance-scoped (de-logo-${size}-a/b) to prevent
+//     SVG <defs> collisions when multiple Logo instances render on the same page
+//   - SVG has aria-hidden="true" — wrap with aria-label on the parent <a>
+// ─────────────────────────────────────────────────────────────────────────────
+
+function buildLogoSection(page, x, y) {
+  const section = autoFrame('ui/Logo', 'VERTICAL', 28);
   section.x = x;
   section.y = y;
-  section.appendChild(sectionTitle('Button — Variants & Sizes'));
+  section.appendChild(sectionTitle('ui/Logo — Brand Mark · components/ui/Logo.tsx'));
+
+  const note = txt(
+    'Source: Figma node 1:548 · Dual diagonal gradients (#0066FF→#00D4FF). ' +
+    'Gradient IDs are instance-scoped to prevent SVG <defs> collisions.',
+    12, 'regular', '#4A5565'
+  );
+  section.appendChild(note);
+
+  const sizesRow = autoFrame('Logo/Sizes', 'HORIZONTAL', 40);
+  sizesRow.counterAxisAlignItems = 'FLEX_END';
+
+  // SVG import with solid primary blue background (gradient applied below)
+  // The icon path is the exact path from components/ui/Logo.tsx
+  const LOGO_SVG_ICON_PATH = 'M13.5 7.667C14.881 7.667 16 8.786 16 10.167V13.5C16 14.881 14.881 16 13.5 16H12.666V18.5C12.666 18.721 12.754 18.934 12.91 19.09C13.066 19.246 13.279 19.334 13.5 19.334H16V18.5C16 17.12 17.12 16 18.5 16H21.833C23.214 16 24.333 17.119 24.333 18.5V21.833C24.333 23.214 23.214 24.333 21.833 24.333H18.5C17.119 24.333 16 23.214 16 21.833V21H13.5C12.837 21 12.2 20.737 11.731 20.269C11.263 19.8 11 19.163 11 18.5V16H10.167C8.786 16 7.667 14.881 7.667 13.5V10.167C7.667 8.786 8.786 7.667 10.167 7.667H13.5ZM18.5 17.666C18.04 17.666 17.666 18.04 17.666 18.5V21.833C17.666 22.293 18.04 22.666 18.5 22.666H21.833C22.293 22.666 22.666 22.293 22.666 21.833V18.5C22.666 18.04 22.293 17.666 21.833 17.666H18.5ZM10.167 9.333C9.707 9.333 9.333 9.707 9.333 10.167V13.5C9.333 13.96 9.707 14.333 10.167 14.333H13.5C13.96 14.333 14.333 13.96 14.333 13.5V10.167C14.333 9.707 13.96 9.333 13.5 9.333H10.167Z';
+  const LOGO_BG_PATH = 'M0 10C0 4.47715 4.47715 0 10 0H22C27.5228 0 32 4.47715 32 10V22C32 27.5228 27.5228 32 22 32H10C4.47715 32 0 27.5228 0 22V10Z';
+
+  for (const logoSize of [24, 32, 48, 64]) {
+    const col = autoFrame(`Logo/Size${logoSize}`, 'VERTICAL', 8);
+    col.counterAxisAlignItems = 'CENTER';
+
+    // Import SVG with solid background (gradient applied afterward)
+    const svgStr = [
+      '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">',
+      '<path d="' + LOGO_BG_PATH + '" fill="#0066FF"/>',
+      '<path d="' + LOGO_SVG_ICON_PATH + '" fill="white"/>',
+      '</svg>',
+    ].join('');
+
+    let logoNode;
+    try {
+      logoNode = figma.createNodeFromSvg(svgStr);
+      logoNode.name = `Logo/${logoSize}px`;
+      logoNode.resize(logoSize, logoSize);
+
+      // Upgrade background vector fill to gradient
+      if (logoNode.children && logoNode.children.length > 0) {
+        const bgVec = logoNode.children[0];
+        if (bgVec && 'fills' in bgVec) {
+          bgVec.fills = gradientLinear(135, [[0, '#0066FF'], [1, '#00D4FF']]);
+        }
+      }
+    } catch (err) {
+      // Fallback: manual rectangle approximation if SVG import fails
+      console.log('SVG import failed, using rectangle fallback:', err.message);
+      logoNode = figma.createFrame();
+      logoNode.name = `Logo/${logoSize}px`;
+      logoNode.resize(logoSize, logoSize);
+      logoNode.cornerRadius = Math.round(logoSize * (10 / 32));
+      logoNode.fills = gradientLinear(135, [[0, '#0066FF'], [1, '#00D4FF']]);
+    }
+
+    const comp = figma.createComponentFromNode(logoNode);
+    comp.name = `Logo/${logoSize}px`;
+    col.appendChild(comp);
+    col.appendChild(txt(`${logoSize}px`, 11, 'medium', '#FFFFFF'));
+    sizesRow.appendChild(col);
+  }
+
+  section.appendChild(sizesRow);
+
+  // Lockup example: Logo + Wordmark (as used in Navigation and Footer)
+  const lockupLabel = txt('Lockup: Logo + Wordmark (used in Navigation, Footer)', 12, 'regular', '#4A5565');
+  section.appendChild(lockupLabel);
+
+  const lockup = figma.createFrame();
+  lockup.name = 'Logo/Lockup';
+  lockup.layoutMode = 'HORIZONTAL';
+  lockup.primaryAxisSizingMode = 'AUTO';
+  lockup.counterAxisSizingMode = 'AUTO';
+  lockup.itemSpacing = 10;
+  lockup.counterAxisAlignItems = 'CENTER';
+  lockup.fills = [];
+
+  const lockupSvg = [
+    '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">',
+    '<path d="' + LOGO_BG_PATH + '" fill="#0066FF"/>',
+    '<path d="' + LOGO_SVG_ICON_PATH + '" fill="white"/>',
+    '</svg>',
+  ].join('');
+
+  try {
+    const lockupIcon = figma.createNodeFromSvg(lockupSvg);
+    lockupIcon.name = 'Logo/Icon';
+    lockupIcon.resize(32, 32);
+    if (lockupIcon.children && lockupIcon.children.length > 0) {
+      const bg = lockupIcon.children[0];
+      if (bg && 'fills' in bg) {
+        bg.fills = gradientLinear(135, [[0, '#0066FF'], [1, '#00D4FF']]);
+      }
+    }
+    lockup.appendChild(lockupIcon);
+  } catch {
+    const lockupRect = figma.createRectangle();
+    lockupRect.name = 'Logo/Icon';
+    lockupRect.resize(32, 32);
+    lockupRect.cornerRadius = 10;
+    lockupRect.fills = gradientLinear(135, [[0, '#0066FF'], [1, '#00D4FF']]);
+    lockup.appendChild(lockupRect);
+  }
+
+  const wordmark = txt('Decision Engine', 16, 'semibold', '#FFFFFF');
+  wordmark.name = 'Wordmark';
+  lockup.appendChild(wordmark);
+
+  section.appendChild(lockup);
+  page.appendChild(section);
+  return section;
+}
+
+// ─── ui/Button ────────────────────────────────────────────────────────────────
+// React: components/ui/Button.tsx
+// Props: variant (primary|gradient|ghost|outline), size (sm|md|lg), href?, className?
+// Renders as <a> when href is provided, otherwise <button>
+//
+// Padding reference (matches Tailwind classes):
+//   SM: px-3  py-1.5  → 12/6px   · font-size 14px · radius 8px
+//   MD: px-6  py-3    → 24/12px  · font-size 16px · radius 10px
+//   LG: px-8  py-4    → 32/16px  · font-size 16px · radius 10px
+// ─────────────────────────────────────────────────────────────────────────────
+
+function buildButtonSection(page, x, y) {
+  const section = autoFrame('ui/Button', 'VERTICAL', 28);
+  section.x = x;
+  section.y = y;
+  section.appendChild(sectionTitle('ui/Button — Variants & Sizes · components/ui/Button.tsx'));
 
   const variants = [
-    { name: 'Primary',  bg: solid('#0066FF'),          textColor: '#FFFFFF', border: null                  },
-    { name: 'Gradient', bg: gradientLinear(90, [[0, '#2B7FFF'], [1, '#00B8DB']]),
-                                                        textColor: '#FFFFFF', border: null                  },
-    { name: 'Ghost',    bg: solid('#FFFFFF', 0.05),    textColor: '#FFFFFF', border: solid('#FFFFFF', 0.2) },
-    { name: 'Outline',  bg: solid('#FFFFFF', 0),       textColor: '#374151', border: solid('#E5E7EB')      },
+    { name: 'primary',  bg: solid('#0066FF'),                                          textColor: '#FFFFFF', border: null                  },
+    { name: 'gradient', bg: gradientLinear(90, [[0, '#2B7FFF'], [1, '#00B8DB']]),
+                                                                                        textColor: '#FFFFFF', border: null                  },
+    { name: 'ghost',    bg: solid('#FFFFFF', 0.05),                                    textColor: '#FFFFFF', border: solid('#FFFFFF', 0.2) },
+    { name: 'outline',  bg: solid('#FFFFFF', 0),                                       textColor: '#374151', border: solid('#E5E7EB')      },
   ];
 
+  // Exact Tailwind values: sm=px-3/py-1.5, md=px-6/py-3, lg=px-8/py-4
   const sizes = [
-    { name: 'SM', pH: 12, pV: 6,  fs: 14, radius: 8  },
-    { name: 'MD', pH: 24, pV: 10, fs: 16, radius: 10 },
-    { name: 'LG', pH: 32, pV: 14, fs: 16, radius: 10 },
+    { name: 'sm', pH: 12, pV: 6,  fs: 14, radius: 8  },
+    { name: 'md', pH: 24, pV: 12, fs: 16, radius: 10 },
+    { name: 'lg', pH: 32, pV: 16, fs: 16, radius: 10 },
   ];
 
   const variantRow = autoFrame('Variants', 'HORIZONTAL', 32);
@@ -361,30 +501,30 @@ function buildButtonSection(page, x, y) {
     col.appendChild(txt(v.name, 12, 'semibold', '#90A1B9'));
 
     for (const s of sizes) {
-      // Build button frame
-      const btn = autoFrame(`_btn`, 'HORIZONTAL', 8);
-      btn.paddingLeft  = s.pH;
-      btn.paddingRight = s.pH;
-      btn.paddingTop   = s.pV;
-      btn.paddingBottom = s.pV;
-      btn.cornerRadius = s.radius;
-      btn.primaryAxisAlignItems = 'CENTER';
-      btn.counterAxisAlignItems = 'CENTER';
-      btn.fills = v.bg;
+      const btnFrame = autoFrame(`Button/${v.name}/${s.name}`, 'HORIZONTAL', 8);
+      btnFrame.paddingLeft   = s.pH;
+      btnFrame.paddingRight  = s.pH;
+      btnFrame.paddingTop    = s.pV;
+      btnFrame.paddingBottom = s.pV;
+      btnFrame.cornerRadius  = s.radius;
+      btnFrame.primaryAxisAlignItems = 'CENTER';
+      btnFrame.counterAxisAlignItems = 'CENTER';
+      btnFrame.fills = v.bg;
 
       if (v.border) {
-        btn.strokes = v.border;
-        btn.strokeWeight = 1;
-        btn.strokeAlign = 'INSIDE';
+        btnFrame.strokes = v.border;
+        btnFrame.strokeWeight = 1;
+        btnFrame.strokeAlign = 'INSIDE';
       }
 
-      const label = txt(s.name === 'SM' ? 'Label' : 'Start Building Free', s.fs, 'medium', v.textColor);
-      btn.appendChild(label);
+      const label = txt(
+        s.name === 'sm' ? 'Label' : 'Get Started Free',
+        s.fs, 'medium', v.textColor
+      );
+      btnFrame.appendChild(label);
 
-      // Wrap in a Figma component
-      const comp = figma.createComponentFromNode(btn);
+      const comp = figma.createComponentFromNode(btnFrame);
       comp.name = `Button/${v.name}/${s.name}`;
-
       col.appendChild(comp);
     }
 
@@ -396,40 +536,154 @@ function buildButtonSection(page, x, y) {
   return section;
 }
 
-function buildCardSection(page, x, y) {
-  const section = autoFrame('Cards', 'VERTICAL', 28);
+// ─── ui/Badge ─────────────────────────────────────────────────────────────────
+// React: components/ui/Badge.tsx
+// Props: variant (primary|success|muted|gradient), dot?, className?
+// Base: px-3 py-1.5 rounded-full text-[14px] font-normal inline-flex gap-2
+// dot: w-1.5 h-1.5 (6×6px) rounded-full, color = currentColor
+// ─────────────────────────────────────────────────────────────────────────────
+
+function buildBadgeSection(page, x, y) {
+  const section = autoFrame('ui/Badge', 'VERTICAL', 28);
   section.x = x;
   section.y = y;
-  section.appendChild(sectionTitle('Card — Variants'));
+  section.appendChild(sectionTitle('ui/Badge — Variants · components/ui/Badge.tsx'));
+
+  // Maps to Badge.tsx variantStyles
+  const variants = [
+    {
+      name:      'primary',
+      bg:        solid('#0066FF', 0.2),   // rgba(0,102,255,0.2)
+      textColor: '#00D4FF',               // text-[#00d4ff]
+      dotColor:  '#00D4FF',
+    },
+    {
+      name:      'success',
+      bg:        solid('#00C950', 0.15),  // rgba(0,201,80,0.15)
+      textColor: '#00C950',
+      dotColor:  '#00C950',
+    },
+    {
+      name:      'muted',
+      bg:        solid('#FFFFFF', 0.08),  // rgba(255,255,255,0.08)
+      textColor: '#90A1B9',
+      dotColor:  '#90A1B9',
+    },
+    {
+      name:      'gradient',
+      bg:        gradientLinear(135, [[0, '#0066FF'], [1, '#00D4FF']]),
+      textColor: '#FFFFFF',
+      dotColor:  '#FFFFFF',
+    },
+  ];
+
+  // Base badge geometry: px-3=12px, py-1.5=6px, rounded-full
+  const pH = 12;
+  const pV = 6;
+  const RADIUS = 9999;
+
+  // Row 1: without dot
+  const noDotRow = autoFrame('Badge/NoDot', 'HORIZONTAL', 16);
+  noDotRow.counterAxisAlignItems = 'CENTER';
+
+  // Row 2: with dot
+  const dotRow = autoFrame('Badge/WithDot', 'HORIZONTAL', 16);
+  dotRow.counterAxisAlignItems = 'CENTER';
+
+  for (const v of variants) {
+    // --- Without dot ---
+    const badge = autoFrame(`Badge/${v.name}`, 'HORIZONTAL', 8);
+    badge.paddingLeft   = pH;
+    badge.paddingRight  = pH;
+    badge.paddingTop    = pV;
+    badge.paddingBottom = pV;
+    badge.cornerRadius  = RADIUS;
+    badge.primaryAxisAlignItems = 'CENTER';
+    badge.counterAxisAlignItems = 'CENTER';
+    badge.fills = v.bg;
+
+    badge.appendChild(txt('Badge', 14, 'regular', v.textColor));
+
+    const comp = figma.createComponentFromNode(badge);
+    comp.name = `Badge/${v.name}`;
+    noDotRow.appendChild(comp);
+
+    // --- With dot ---
+    const badgeDot = autoFrame(`Badge/${v.name}/dot`, 'HORIZONTAL', 8);
+    badgeDot.paddingLeft   = pH;
+    badgeDot.paddingRight  = pH;
+    badgeDot.paddingTop    = pV;
+    badgeDot.paddingBottom = pV;
+    badgeDot.cornerRadius  = RADIUS;
+    badgeDot.primaryAxisAlignItems = 'CENTER';
+    badgeDot.counterAxisAlignItems = 'CENTER';
+    badgeDot.fills = v.bg;
+
+    const dot = figma.createEllipse();
+    dot.name = 'Dot';
+    dot.resize(6, 6);
+    dot.fills = solid(v.dotColor);
+    badgeDot.appendChild(dot);
+    badgeDot.appendChild(txt('Badge', 14, 'regular', v.textColor));
+
+    const compDot = figma.createComponentFromNode(badgeDot);
+    compDot.name = `Badge/${v.name}/dot`;
+    dotRow.appendChild(compDot);
+  }
+
+  const rowLabel1 = txt('Without dot', 12, 'regular', '#4A5565');
+  const rowLabel2 = txt('With dot prop', 12, 'regular', '#4A5565');
+
+  section.appendChild(rowLabel1);
+  section.appendChild(noDotRow);
+  section.appendChild(rowLabel2);
+  section.appendChild(dotRow);
+  page.appendChild(section);
+  return section;
+}
+
+// ─── ui/Card ──────────────────────────────────────────────────────────────────
+// React: components/ui/Card.tsx
+// Props: variant (dark|light|feature), className?, style?
+//
+// Variants (match Card.tsx variantStyles exactly):
+//   dark:    bg #0f1629, border rgba(255,255,255,0.08), rounded-2xl p-6
+//   light:   bg #ffffff, border #f3f4f6, shadow-sm, rounded-2xl p-6
+//   feature: bg #ffffff, border #e5e7eb, rounded-2xl p-6
+// ─────────────────────────────────────────────────────────────────────────────
+
+function buildCardSection(page, x, y) {
+  const section = autoFrame('ui/Card', 'VERTICAL', 28);
+  section.x = x;
+  section.y = y;
+  section.appendChild(sectionTitle('ui/Card — Variants · components/ui/Card.tsx'));
 
   const variants = [
     {
-      compName:   'Card/Feature/Light',
-      bg:         solid('#FFFFFF'),
-      border:     solid('#E5E7EB'),
-      titleColor: '#111827',
-      bodyColor:  '#4A5565',
-      accentType: 'icon',
+      compName:   'Card/dark',
+      bg:         solid('#0F1629'),
+      border:     solid('#FFFFFF', 0.08),
+      titleColor: '#FFFFFF',
+      bodyColor:  '#90A1B9',
       accentBg:   solid('#0066FF', 0.08),
       accentFg:   '#0066FF',
     },
     {
-      compName:   'Card/Problem/Dark',
-      bg:         solid('#FFFFFF', 0.03),
-      border:     solid('#FFFFFF', 0.08),
-      titleColor: '#FFFFFF',
-      bodyColor:  '#90A1B9',
-      accentType: 'icon',
-      accentBg:   solid('#FB2C36', 0.15),
-      accentFg:   '#FB2C36',
+      compName:   'Card/light',
+      bg:         solid('#FFFFFF'),
+      border:     solid('#F3F4F6'),
+      titleColor: '#111827',
+      bodyColor:  '#4A5565',
+      accentBg:   solid('#0066FF', 0.08),
+      accentFg:   '#0066FF',
     },
     {
-      compName:   'Card/UseCase/Light',
-      bg:         solid('#F9FAFB'),
+      compName:   'Card/feature',
+      bg:         solid('#FFFFFF'),
       border:     solid('#E5E7EB'),
       titleColor: '#111827',
       bodyColor:  '#4A5565',
-      accentType: 'dot',
+      accentBg:   solid('#0066FF', 0.08),
       accentFg:   '#0066FF',
     },
   ];
@@ -437,55 +691,48 @@ function buildCardSection(page, x, y) {
   const cardsRow = autoFrame('Cards Row', 'HORIZONTAL', 24);
 
   for (const v of variants) {
-    const card = autoFrame('_card', 'VERTICAL', 16);
-    card.paddingLeft   = 32;
-    card.paddingRight  = 32;
-    card.paddingTop    = 32;
-    card.paddingBottom = 32;
-    card.cornerRadius  = 16;
-    card.fills         = v.bg;
-    card.strokes       = v.border;
-    card.strokeWeight  = 1;
-    card.strokeAlign   = 'INSIDE';
+    const cardFrame = autoFrame(`Card/${v.compName.split('/')[1]}`, 'VERTICAL', 16);
+    cardFrame.paddingLeft   = 24;  // p-6 = 24px
+    cardFrame.paddingRight  = 24;
+    cardFrame.paddingTop    = 24;
+    cardFrame.paddingBottom = 24;
+    cardFrame.cornerRadius  = 16;  // rounded-2xl = 16px
+    cardFrame.fills         = v.bg;
+    cardFrame.strokes       = v.border;
+    cardFrame.strokeWeight  = 1;
+    cardFrame.strokeAlign   = 'INSIDE';
 
-    if (v.accentType === 'icon') {
-      const iconBox = figma.createFrame();
-      iconBox.name = 'Icon Box';
-      iconBox.layoutMode = 'HORIZONTAL';
-      iconBox.primaryAxisSizingMode = 'FIXED';
-      iconBox.counterAxisSizingMode = 'FIXED';
-      iconBox.resize(44, 44);
-      iconBox.primaryAxisAlignItems = 'CENTER';
-      iconBox.counterAxisAlignItems = 'CENTER';
-      iconBox.cornerRadius = 12;
-      iconBox.fills = v.accentBg;
+    // Icon box (accent)
+    const iconBox = figma.createFrame();
+    iconBox.name = 'Icon Box';
+    iconBox.layoutMode = 'HORIZONTAL';
+    iconBox.primaryAxisSizingMode = 'FIXED';
+    iconBox.counterAxisSizingMode = 'FIXED';
+    iconBox.resize(44, 44);
+    iconBox.primaryAxisAlignItems = 'CENTER';
+    iconBox.counterAxisAlignItems = 'CENTER';
+    iconBox.cornerRadius = 12;
+    iconBox.fills = v.accentBg;
 
-      const dot = figma.createEllipse();
-      dot.name = '_icon';
-      dot.resize(16, 16);
-      dot.fills = solid(v.accentFg);
-      iconBox.appendChild(dot);
-      card.appendChild(iconBox);
-    } else {
-      const dot = figma.createEllipse();
-      dot.name = 'Accent Dot';
-      dot.resize(12, 12);
-      dot.fills = solid(v.accentFg);
-      card.appendChild(dot);
-    }
+    const iconDot = figma.createEllipse();
+    iconDot.name = 'Icon';
+    iconDot.resize(16, 16);
+    iconDot.fills = solid(v.accentFg);
+    iconBox.appendChild(iconDot);
+    cardFrame.appendChild(iconBox);
 
-    card.appendChild(txt('Card Title', 18, 'medium', v.titleColor));
+    cardFrame.appendChild(txt('Card Title', 18, 'medium', v.titleColor));
 
     const body = figma.createText();
     body.name = 'Description';
     body.fontName = fontFor('regular');
-    body.characters = 'Short description explaining what this card is about and why it matters.';
+    body.characters = 'Short description explaining what this card is about.';
     body.fontSize = 16;
     body.lineHeight = { value: 26, unit: 'PIXELS' };
     body.fills = solid(v.bodyColor);
-    card.appendChild(body);
+    cardFrame.appendChild(body);
 
-    const comp = figma.createComponentFromNode(card);
+    const comp = figma.createComponentFromNode(cardFrame);
     comp.name = v.compName;
     comp.resize(288, comp.height);
     cardsRow.appendChild(comp);
@@ -496,51 +743,61 @@ function buildCardSection(page, x, y) {
   return section;
 }
 
+// ─── ui/SectionHeader ─────────────────────────────────────────────────────────
+// React: components/ui/SectionHeader.tsx
+// Props: label?, heading, description?, align ('left'|'center'), dark?, labelColor?, className?
+// Note: Figma align='MIN' corresponds to React prop align='left'
+//       Figma align='CENTER' corresponds to React prop align='center'
+// ─────────────────────────────────────────────────────────────────────────────
+
 function buildSectionHeaderSection(page, x, y) {
-  const section = autoFrame('SectionHeaders', 'VERTICAL', 28);
+  const section = autoFrame('ui/SectionHeader', 'VERTICAL', 28);
   section.x = x;
   section.y = y;
-  section.appendChild(sectionTitle('SectionHeader — Variants'));
+  section.appendChild(sectionTitle('ui/SectionHeader — Variants · components/ui/SectionHeader.tsx'));
 
   const variants = [
     {
-      compName:     'SectionHeader/Light/Center',
+      compName:     'SectionHeader/light/center',
       bg:           solid('#F9FAFB'),
       labelColor:   '#0066FF',
       headingColor: '#111827',
       bodyColor:    '#4A5565',
       align:        'CENTER',
+      reactProps:   'dark={false} align="center"',
     },
     {
-      compName:     'SectionHeader/Dark/Center',
+      compName:     'SectionHeader/dark/center',
       bg:           solid('#0A0F1E'),
       labelColor:   '#90A1B9',
       headingColor: '#FFFFFF',
       bodyColor:    '#90A1B9',
       align:        'CENTER',
+      reactProps:   'dark={true} align="center"',
     },
     {
-      compName:     'SectionHeader/Dark/Left',
+      compName:     'SectionHeader/dark/left',
       bg:           solid('#0A0F1E'),
       labelColor:   '#90A1B9',
       headingColor: '#FFFFFF',
       bodyColor:    '#90A1B9',
       align:        'MIN',
+      reactProps:   'dark={true} align="left"',
     },
   ];
 
   const headersRow = autoFrame('Headers Row', 'HORIZONTAL', 24);
 
   for (const v of variants) {
-    const header = autoFrame('_header', 'VERTICAL', 16);
-    header.paddingLeft   = 40;
-    header.paddingRight  = 40;
-    header.paddingTop    = 40;
-    header.paddingBottom = 40;
-    header.cornerRadius  = 12;
-    header.fills         = v.bg;
-    header.primaryAxisAlignItems  = v.align;
-    header.counterAxisAlignItems  = v.align;
+    const headerFrame = autoFrame(`SectionHeader/${v.compName.split('/').slice(1).join('/')}`, 'VERTICAL', 16);
+    headerFrame.paddingLeft   = 40;
+    headerFrame.paddingRight  = 40;
+    headerFrame.paddingTop    = 40;
+    headerFrame.paddingBottom = 40;
+    headerFrame.cornerRadius  = 12;
+    headerFrame.fills         = v.bg;
+    headerFrame.primaryAxisAlignItems  = v.align;
+    headerFrame.counterAxisAlignItems  = v.align;
 
     const lbl = txt('SECTION LABEL', 12, 'semibold', v.labelColor, {
       letterSpacing: 1.5,
@@ -548,14 +805,14 @@ function buildSectionHeaderSection(page, x, y) {
       textAlign: v.align === 'CENTER' ? 'CENTER' : 'LEFT',
     });
     lbl.name = 'Label';
-    header.appendChild(lbl);
+    headerFrame.appendChild(lbl);
 
     const heading = txt('Section Heading', 36, 'medium', v.headingColor, {
       lineHeight: 44,
       textAlign: v.align === 'CENTER' ? 'CENTER' : 'LEFT',
     });
     heading.name = 'Heading';
-    header.appendChild(heading);
+    headerFrame.appendChild(heading);
 
     const desc = txt(
       'Optional supporting description that provides more context about this section.',
@@ -565,9 +822,14 @@ function buildSectionHeaderSection(page, x, y) {
       }
     );
     desc.name = 'Description';
-    header.appendChild(desc);
+    headerFrame.appendChild(desc);
 
-    const comp = figma.createComponentFromNode(header);
+    // React props annotation
+    const annotation = txt(`React: <SectionHeader ${v.reactProps} />`, 11, 'regular', '#4A5565');
+    annotation.name = 'Annotation';
+    headerFrame.appendChild(annotation);
+
+    const comp = figma.createComponentFromNode(headerFrame);
     comp.name = v.compName;
     comp.resize(360, comp.height);
     headersRow.appendChild(comp);
@@ -597,16 +859,22 @@ y += s2.height + GAP;
 const s3 = buildSpacingSection(page, LEFT, y);
 y += s3.height + GAP;
 
-const s4 = buildButtonSection(page, LEFT, y);
+const s4 = buildLogoSection(page, LEFT, y);
 y += s4.height + GAP;
 
-const s5 = buildCardSection(page, LEFT, y);
+const s5 = buildBadgeSection(page, LEFT, y);
 y += s5.height + GAP;
+
+const s6 = buildButtonSection(page, LEFT, y);
+y += s6.height + GAP;
+
+const s7 = buildCardSection(page, LEFT, y);
+y += s7.height + GAP;
 
 buildSectionHeaderSection(page, LEFT, y);
 
 figma.viewport.scrollAndZoomIntoView(page.children);
 
-return `✅ Design System built — ${page.children.length} sections on page "🎨 Design System"`;
+return `✅ Design System v3 built — ${page.children.length} sections on "🎨 Design System"`;
 
 })();
